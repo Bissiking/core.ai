@@ -1,7 +1,7 @@
 import express from "express";
 import { enqueueAgentJob, getStatus } from "./queue/inMemoryQueue.js";
 import { getWorkerStatus, startAgentWorker } from "./worker/agentWorker.js";
-import { getResultTarget } from "./worker/orionClient.js";
+import { getResultTarget, hasApiTokenConfigured } from "./worker/orionClient.js";
 
 const app = express();
 app.use(express.json());
@@ -75,7 +75,10 @@ app.get("/job/agent-ai/:agentId", (req, res) => {
 app.get("/health", (_req, res) => {
   return res.json({
     status: "ok",
-    worker: getWorkerStatus()
+    worker: getWorkerStatus(),
+    auth: {
+      tokenConfigured: hasApiTokenConfigured()
+    }
   });
 });
 
