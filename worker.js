@@ -23,6 +23,7 @@ async function loop() {
     }
 
     try {
+      console.log("CALLING OLLAMA...");
       const res = await fetch("http://localhost:11434/api/generate", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
