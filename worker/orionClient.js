@@ -71,6 +71,26 @@ export function getResultTarget() {
   return endpoint(RESULT_ENDPOINT);
 }
 
+export function getInputTarget(agentId = null) {
+  if (agentId === null) {
+    return endpoint("/api/orion/ai/input/:agentId");
+  }
+
+  return endpoint(`/api/orion/ai/input/${encodeURIComponent(agentId)}`);
+}
+
+export function getOrionDebugInfo() {
+  return {
+    baseUrl: BASE_URL,
+    inputUrlTemplate: getInputTarget(),
+    resultUrl: getResultTarget(),
+    tokenConfigured: Boolean(LUMA_API_TOKEN),
+    tokenPreview: LUMA_API_TOKEN
+      ? `${LUMA_API_TOKEN.slice(0, 4)}***`
+      : null
+  };
+}
+
 export function isRetryableError(error) {
   if (!(error instanceof HttpError)) return true;
 

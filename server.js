@@ -1,7 +1,11 @@
 import express from "express";
 import { enqueueAgentJob, getStatus } from "./queue/inMemoryQueue.js";
 import { getWorkerStatus, startAgentWorker } from "./worker/agentWorker.js";
-import { getResultTarget, hasApiTokenConfigured } from "./worker/orionClient.js";
+import {
+  getOrionDebugInfo,
+  getResultTarget,
+  hasApiTokenConfigured
+} from "./worker/orionClient.js";
 
 const app = express();
 app.use(express.json());
@@ -78,8 +82,13 @@ app.get("/health", (_req, res) => {
     worker: getWorkerStatus(),
     auth: {
       tokenConfigured: hasApiTokenConfigured()
-    }
+    },
+    orion: getOrionDebugInfo()
   });
+});
+
+app.get("/debug/orion", (_req, res) => {
+  return res.json(getOrionDebugInfo());
 });
 
 const port = Number(process.env.PORT ?? 3002);
