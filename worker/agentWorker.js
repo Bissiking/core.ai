@@ -5,7 +5,14 @@ import {
   markDone,
   markError
 } from "../queue/inMemoryQueue.js";
-import { fetchAgentInput, getResultTarget, isRetryableError, pushAgentResult } from "./orionClient.js";
+
+import {
+  fetchAgentInput,
+  getResultTarget,
+  isRetryableError,
+  pushAgentResult
+} from "./orionClient.js";
+
 import { runDeepseekAnalysis } from "./deepseekService.js";
 
 const MAX_CONCURRENCY = Number(process.env.WORKER_CONCURRENCY ?? 2);
@@ -45,8 +52,10 @@ async function handleJob(job) {
           pushedAt: new Date().toISOString()
         }
       });
+
       log("log", "job-done", { agentId, attempt });
       return;
+
     } catch (error) {
       const retryable = isRetryableError(error);
       const hasRetry = attempt < MAX_RETRIES;
@@ -63,12 +72,14 @@ async function handleJob(job) {
       }
 
       const delay = getRetryDelay(attempt);
+
       log("warn", "job-retry-scheduled", {
         agentId,
         attempt,
         delayMs: delay,
         error: error.message
       });
+
       await sleep(delay);
     }
   }
@@ -82,12 +93,14 @@ async function loop() {
     }
 
     const job = dequeueAgentJob();
+
     if (!job) {
       await sleep(IDLE_SLEEP_MS);
       continue;
     }
 
     inFlight += 1;
+
     void handleJob(job)
       .catch((error) => {
         log("error", "job-unhandled", { error: error.message });

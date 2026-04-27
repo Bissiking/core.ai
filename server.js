@@ -1,7 +1,11 @@
 import express from "express";
 import { enqueueAgentJob, getStatus } from "./queue/inMemoryQueue.js";
 import { getWorkerStatus, startAgentWorker } from "./worker/agentWorker.js";
-import { getOrionDebugInfo, getResultTarget, hasApiTokenConfigured } from "./worker/orionClient.js";
+import {
+  getOrionDebugInfo,
+  getResultTarget,
+  hasApiTokenConfigured
+} from "./worker/orionClient.js";
 
 const app = express();
 app.use(express.json());
