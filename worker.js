@@ -24,17 +24,22 @@ async function loop() {
 
     try {
       console.log("CALLING OLLAMA...");
-      const res = await fetch("http://localhost:11434/api/generate", {
+      const res = await fetch("http://127.0.0.1:11434/api/generate", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           model: "deepseek-r1:7b",
           prompt: job.prompt,
           stream: false
         })
       });
-
-      const data = await res.json();
+      
+      const text = await res.text();
+      console.log("RAW:", text);
+      
+      const data = JSON.parse(text);
       job.resolve(data.response);
 
     } catch (err) {
