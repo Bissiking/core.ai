@@ -17,20 +17,27 @@ function endpoint(path) {
 
 function buildHeaders(extra = {}) {
   const headers = { ...extra };
+
   if (LUMA_API_TOKEN) {
     headers.Authorization = `Bearer ${LUMA_API_TOKEN}`;
   }
+
   return headers;
 }
 
 export async function fetchAgentInput(agentId) {
-  const res = await fetch(endpoint(`/api/orion/ai/input/${encodeURIComponent(agentId)}`), {
-    headers: buildHeaders()
-  });
+  const res = await fetch(
+    endpoint(`/api/orion/ai/input/${encodeURIComponent(agentId)}`),
+    { headers: buildHeaders() }
+  );
 
   if (!res.ok) {
     const text = await res.text();
-    throw new HttpError(`input-http-${res.status}:${text.slice(0, 300)}`, res.status, text);
+    throw new HttpError(
+      `input-http-${res.status}:${text.slice(0, 300)}`,
+      res.status,
+      text
+    );
   }
 
   return res.json();
@@ -50,7 +57,11 @@ export async function pushAgentResult(agentId, payload) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new HttpError(`result-http-${res.status}:${text.slice(0, 300)}`, res.status, text);
+    throw new HttpError(
+      `result-http-${res.status}:${text.slice(0, 300)}`,
+      res.status,
+      text
+    );
   }
 
   return res.json().catch(() => ({ status: "ok" }));
@@ -63,6 +74,7 @@ export function getResultTarget() {
 export function isRetryableError(error) {
   if (!(error instanceof HttpError)) return true;
 
+  // erreurs client → inutile de retry
   if ([400, 401, 403, 404].includes(error.status)) {
     return false;
   }
